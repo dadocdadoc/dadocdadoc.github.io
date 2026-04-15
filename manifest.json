@@ -1,0 +1,24 @@
+{
+  "name": "다독다독 — AI 독서몰입앱",
+  "short_name": "다독다독",
+  "description": "읽다 만 책을 끝까지 읽게 만드는 기술",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5efe6",
+  "theme_color": "#f5efe6",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%232c2218'/><circle cx='256' cy='220' r='120' fill='%23c45a3c' opacity='.8'/><circle cx='256' cy='220' r='85' fill='%23e8734a' opacity='.3'/><text x='256' y='420' text-anchor='middle' font-size='120' font-weight='900' fill='%23f5efe6' font-family='serif'>D.</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='40' fill='%232c2218'/><circle cx='96' cy='82' r='45' fill='%23c45a3c' opacity='.8'/><text x='96' y='158' text-anchor='middle' font-size='45' font-weight='900' fill='%23f5efe6' font-family='serif'>D.</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
