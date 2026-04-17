@@ -37,7 +37,9 @@ header{padding:14px 20px;background:color-mix(in srgb,var(--bg) 94%,transparent)
 .ch-pills button.on{border-color:color-mix(in srgb,var(--accent) 80%,transparent);background:var(--card);color:var(--accent);font-weight:700}
 .ch-pills .part-label{font-size:10px;color:var(--sub);font-weight:600;padding:0 4px;flex-shrink:0;letter-spacing:1px;min-width:24px}
 .content{flex:1;overflow:hidden;padding:0 20px;display:flex;flex-direction:column}
-.page-text{flex:1;overflow:hidden;padding:10px 5px 0;display:flex;flex-direction:column;justify-content:flex-start}
+.page-text{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px 5px 20px;display:flex;flex-direction:column;justify-content:flex-start;scrollbar-width:thin}
+.page-text::-webkit-scrollbar{width:3px}
+.page-text::-webkit-scrollbar-thumb{background:rgba(139,115,85,.25);border-radius:2px}
 
 .page-text p {
   font-size: 17px;
@@ -560,20 +562,32 @@ function render(){
   var current_page_paras = [];
   var current_page_length = 0;
   
-  // 핵심: 이 숫자를 줄여야 한 화면에 쏙 들어옵니다!
-  // 300~400자 정도면 일반적인 스마트폰 한 화면에 딱 맞습니다.
-  var MAX_CHARS_PER_PAGE = 200; 
+  // 한 페이지 목표 분량 (스마트폰 한 화면 기준)
+  // 17px 폰트 × 1.8 줄간격 × 약 16줄 × 줄당 18자 ≈ 260자 내외가 자연스러움
+  var MAX_CHARS_PER_PAGE = 260;
+  var SOFT_LIMIT = 190; // 이 이상 쌓였을 때 큰 단락이 오면 먼저 페이지를 끊음
 
   for(var i=0; i<rawParas.length; i++) {
       var pText = rawParas[i];
+
+      // 현재 페이지에 이미 내용이 있고, 다음 단락을 더하면 최대치를 크게 넘길 것 같으면
+      // 현재 단락을 추가하기 전에 먼저 페이지를 끊는다 (마지막 단락 잘림 방지)
+      if(current_page_paras.length > 0
+         && current_page_length >= SOFT_LIMIT
+         && current_page_length + pText.length > MAX_CHARS_PER_PAGE + 80) {
+          pages.push(current_page_paras);
+          current_page_paras = [];
+          current_page_length = 0;
+      }
+
       current_page_paras.push(pText);
       current_page_length += pText.length;
 
-      // 만약 지금까지 담은 글자 수가 350자를 넘으면 '다음 페이지'로 넘깁니다.
+      // 만약 지금까지 담은 글자 수가 최대치를 넘으면 '다음 페이지'로 넘깁니다.
       if(current_page_length >= MAX_CHARS_PER_PAGE || i === rawParas.length - 1) {
-          pages.push(current_page_paras); // 지금까지 담은 문단들을 한 페이지로 저장
-          current_page_paras = [];        // 다음 페이지를 위해 바구니 비우기
-          current_page_length = 0;       // 글자 수 계산 초기화
+          pages.push(current_page_paras);
+          current_page_paras = [];
+          current_page_length = 0;
       }
   }
   // --- 페이지 나누기 로직 끝 ---
