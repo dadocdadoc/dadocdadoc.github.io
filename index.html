@@ -37,9 +37,17 @@ header{padding:14px 20px;background:color-mix(in srgb,var(--bg) 94%,transparent)
 .ch-pills button.on{border-color:color-mix(in srgb,var(--accent) 80%,transparent);background:var(--card);color:var(--accent);font-weight:700}
 .ch-pills .part-label{font-size:10px;color:var(--sub);font-weight:600;padding:0 4px;flex-shrink:0;letter-spacing:1px;min-width:24px}
 .content{flex:1;overflow:hidden;padding:0 20px;display:flex;flex-direction:column}
-.page-text{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px 5px 20px;display:flex;flex-direction:column;justify-content:flex-start;scrollbar-width:thin}
-.page-text::-webkit-scrollbar{width:3px}
-.page-text::-webkit-scrollbar-thumb{background:rgba(139,115,85,.25);border-radius:2px}
+.page-text{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px 5px 20px;display:flex;flex-direction:column;justify-content:flex-start}
+/* 내용이 한 페이지를 넘칠 때만 하단을 살짝 페이드시켜 "아래로 더 있음"을 은은히 암시 */
+.page-text.has-overflow{
+  -webkit-mask-image:linear-gradient(to bottom, #000 calc(100% - 28px), rgba(0,0,0,0));
+          mask-image:linear-gradient(to bottom, #000 calc(100% - 28px), rgba(0,0,0,0));
+}
+/* 스크롤을 끝까지 내리면 페이드 해제 (마지막 줄이 선명하게 보이도록) */
+.page-text.has-overflow.at-bottom{
+  -webkit-mask-image:none;
+          mask-image:none;
+}
 
 .page-text p {
   font-size: 17px;
@@ -937,7 +945,25 @@ function render(){
   h+='</div></div>';
 
   document.getElementById('app').innerHTML=h;
-  
+
+  // 페이지 텍스트 오버플로우 감지 & 페이드 토글
+  (function(){
+    var pt = document.querySelector('.page-text');
+    if(!pt) return;
+    // DOM 렌더링 완료 후 측정
+    requestAnimationFrame(function(){
+      var hasOverflow = pt.scrollHeight > pt.clientHeight + 1;
+      pt.classList.toggle('has-overflow', hasOverflow);
+      if(!hasOverflow) return;
+      var checkBottom = function(){
+        var atBottom = pt.scrollHeight - pt.scrollTop - pt.clientHeight < 4;
+        pt.classList.toggle('at-bottom', atBottom);
+      };
+      checkBottom();
+      pt.addEventListener('scroll', checkBottom, {passive:true});
+    });
+  })();
+
 }
 
 
